@@ -1,12 +1,13 @@
-.landing-page {
+t.landing-page {
     display: flex;
     flex-direction: column;
     flex: 1;
     background-color: rgba(93, 91, 91, .4);
     padding: 4rem;
-    position: absolute;
+    position: relative;
     height: 100%;
 }
+
 
 .example-image {
     position: absolute;
@@ -204,6 +205,7 @@ form input::placeholder {
 @media only screen and (max-width: 425px) {
     .landing-page {
         padding: 1rem;
+        position:absolute;
     }
 
     .landing-page form {
