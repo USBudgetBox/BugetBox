@@ -4,7 +4,8 @@ from apps.transactions.serializers import ListTransactionSerializer, Transaction
 from apps.transactions.models import Transaction
 from apps.transactions.models import Category
 from rest_framework import generics, status
-from datetime import datetime
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from calendar import monthrange
 from django.db.models import Sum
 from collections import defaultdict
@@ -91,11 +92,12 @@ class TransactionReport(CustomLoginRequiredMixin, generics.ListAPIView):
     serializer_class = ListTransactionSerializer
 
     def get(self, request, *args, **kwargs):
-        today = datetime.today()
-        past_months = today.month - 3
-        year = today.year
-        start_date = datetime(year, past_months, 1).date()
-        end_date = datetime(year, today.month, monthrange(year, today.month)[-1]).date()
+        current_date=datetime.today()
+        current_year=current_date.year
+        past_date=(current_date-relativedelta(months=3)).date()
+        start_date=datetime(past_date.year,past_date.month,1).date()
+        end_date=datetime(current_year,current_date.month,monthrange(current_year,current_date.month)[-1]).date()
+
         
         transactions = Transaction.objects.filter(
             user_id = request.login_user.id, 
@@ -130,11 +132,12 @@ class ExpenseReport(CustomLoginRequiredMixin, generics.ListAPIView):
     serializer_class = ListTransactionSerializer
 
     def get(self, request, *args, **kwargs):
-        today = datetime.today()
-        past_months = today.month - 3
-        year = today.year
-        start_date = datetime(year, past_months, 1).date()
-        end_date = datetime(year, today.month, monthrange(year, today.month)[-1]).date()
+        current_date=datetime.today()
+        current_year=current_date.year
+        past_date=(current_date-relativedelta(months=3)).date()
+        start_date=datetime(past_date.year,past_date.month,1).date()
+        end_date=datetime(current_year,current_date.month,monthrange(current_year,current_date.month)[-1]).date()
+        
         
         transactions = Transaction.objects.filter(
             user_id=request.login_user.id, 
