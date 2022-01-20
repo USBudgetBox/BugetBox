@@ -1,19 +1,21 @@
+from django.db.models.expressions import Value
+from django.db.models.fields import CharField
 from rest_framework.response import Response
 from apps.users.mixins import CustomLoginRequiredMixin
 from apps.transactions.serializers import ListTransactionSerializer, TransactionSerializer
 from apps.transactions.models import Transaction
 from apps.transactions.models import Category
 from rest_framework import generics, status
-from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
+from datetime import datetime
 from calendar import monthrange
 from django.db.models import Sum
 from collections import defaultdict
 import operator
 from django.db.models.functions import Concat
 from config.helpers.error_response import error_response
-from django.db.models.expressions import Value
-from django.db.models.fields import CharField
+from datetime import timedelta
+from dateutil.relativedelta import relativedelta
+
 class TransactionAdd(CustomLoginRequiredMixin, generics.CreateAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
@@ -92,13 +94,14 @@ class TransactionReport(CustomLoginRequiredMixin, generics.ListAPIView):
     serializer_class = ListTransactionSerializer
 
     def get(self, request, *args, **kwargs):
-        current_date=datetime.today()
-        current_year=current_date.year
-        past_date=(current_date-relativedelta(months=3)).date()
-        start_date=datetime(past_date.year,past_date.month,1).date()
-        end_date=datetime(current_year,current_date.month,monthrange(current_year,current_date.month)[-1]).date()
+        current_date = datetime.today()
+        current_year = current_date.year
 
-        
+        past_date = (current_date - relativedelta(months=3)).date()
+
+        start_date = datetime(past_date.year, past_date.month, 1).date()
+        end_date = datetime(current_year, current_date.month, monthrange(current_year, current_date.month)[-1]).date()
+
         transactions = Transaction.objects.filter(
             user_id = request.login_user.id, 
             date__gte=start_date,
@@ -132,13 +135,14 @@ class ExpenseReport(CustomLoginRequiredMixin, generics.ListAPIView):
     serializer_class = ListTransactionSerializer
 
     def get(self, request, *args, **kwargs):
-        current_date=datetime.today()
-        current_year=current_date.year
-        past_date=(current_date-relativedelta(months=3)).date()
-        start_date=datetime(past_date.year,past_date.month,1).date()
-        end_date=datetime(current_year,current_date.month,monthrange(current_year,current_date.month)[-1]).date()
+        current_date = datetime.today()
+        current_year = current_date.year
+
+        past_date = (current_date - relativedelta(months=3)).date()
         
-        
+        start_date = datetime(past_date.year, past_date.month, 1).date()
+        end_date = datetime(current_year, current_date.month, monthrange(current_year, current_date.month)[-1]).date()
+
         transactions = Transaction.objects.filter(
             user_id=request.login_user.id, 
             type='expense', 
